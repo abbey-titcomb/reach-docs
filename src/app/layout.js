@@ -1,9 +1,9 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Creator Playbook | Documentation',
-  description: 'A comprehensive guide for creators to launch and manage successful projects',
-  keywords: 'creator, playbook, documentation, guide, launch, project management',
+  title: 'Getting Started',
+  description: 'A comprehensive guide to getting started on Reach.Social',
+  keywords: 'documentation, guide, launch, project management',
   viewport: 'width=device-width, initial-scale=1',
 }
 
