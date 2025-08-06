@@ -1,3 +1,5 @@
+# dependencies
+node_modules/
 
 # debug
 npm-debug.log*
@@ -9,6 +11,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Next.js
+.next/
+out/
 
 # typescript
 *.tsbuildinfo
