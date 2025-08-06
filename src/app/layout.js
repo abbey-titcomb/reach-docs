@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Creator Playbook | Documentation',
   description: 'A comprehensive guide for creators to launch and manage successful projects',
   keywords: 'creator, playbook, documentation, guide, launch, project management',
-  authors: [{ name: 'Creator Team' }],
   viewport: 'width=device-width, initial-scale=1',
 }
 
