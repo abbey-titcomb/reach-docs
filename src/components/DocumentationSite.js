@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Book, Settings, Clock, Users, Scale, HeartHandshake, User, Wallet, BadgeCheck, Pin, Shield, DollarSign } from 'lucide-react';
+import { Book, Settings, Clock, Users, Scale, HeartHandshake, User, Wallet, BadgeCheck, Pin, Shield, DollarSign, Copy, Check } from 'lucide-react';
 
 export default function DocumentationSite() {
   const [activeSection, setActiveSection] = useState('introduction');
+  const [copiedSection, setCopiedSection] = useState(null);
 
   const tableOfContents = [
     { id: 'introduction', title: 'Introduction', icon: Book },
@@ -19,8 +20,45 @@ export default function DocumentationSite() {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Update URL hash without triggering scroll
+      window.history.replaceState(null, null, `#${sectionId}`);
     }
   };
+
+  const copySectionLink = async (sectionId) => {
+    const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedSection(sectionId);
+      setTimeout(() => setCopiedSection(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  // Handle URL hash on page load and navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash && tableOfContents.some(item => item.id === hash)) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setActiveSection(hash);
+          }
+        }, 100);
+      }
+    };
+
+    // Handle initial hash
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Update active section based on scroll position
   useEffect(() => {
@@ -44,6 +82,32 @@ export default function DocumentationSite() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Section heading component with copy link functionality
+  const SectionHeading = ({ id, children, className = "" }) => (
+    <h2 
+      id={id} 
+      className={`${className} group cursor-pointer hover:text-blue-600 transition-colors duration-200 flex items-center gap-3`}
+      onClick={() => copySectionLink(id)}
+      title="Click to copy link to this section"
+    >
+      {children}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          copySectionLink(id);
+        }}
+        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 rounded"
+        title="Copy link to section"
+      >
+        {copiedSection === id ? (
+          <Check className="w-5 h-5 text-green-600" />
+        ) : (
+          <Copy className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+        )}
+      </button>
+    </h2>
+  );
 
   return (
     <div className="min-h-screen bg-white font-['Inter',sans-serif]">
@@ -96,7 +160,9 @@ export default function DocumentationSite() {
           <div className="flex-1 max-w-4xl space-y-12 lg:space-y-16 pb-96">
             {/* Introduction Section */}
             <section id="introduction" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Introduction</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                Introduction
+              </SectionHeading>
               <div className="space-y-6 lg:space-y-8">
                 <div className="prose max-w-none">
                   <p className="text-base lg:text-lg text-gray-600 leading-relaxed mt-6">
@@ -126,7 +192,9 @@ export default function DocumentationSite() {
             {/* Basics Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="basics" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Getting Started</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                Getting Started
+              </SectionHeading>
               <div className="space-y-6">
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
                   On Reach.Social, brands create <strong>campaigns</strong> that pay creators to post content. There are two types of campaigns:
@@ -163,7 +231,9 @@ export default function DocumentationSite() {
             {/* Before Launch Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="before-launch" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">For Brands</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                For Brands
+              </SectionHeading>
               <div className="space-y-6">
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
                     On Reach, you can launch viral marketing campaigns in minutes and tap into 3000+ creators instantly. 
@@ -269,7 +339,9 @@ export default function DocumentationSite() {
             {/* First 24 Hours Section - REPLICATED FROM WORKING PATTERN */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="first-24-hours" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">For Creators</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                For Creators
+              </SectionHeading>
               <div className="space-y-6">
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
                   <a href="https://reach.social" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Reach.social</a> is a platform where you get paid to create content. Whether you're making memes, clips, or viral UGC videos, Reach is the place to find campaigns from top brands, podcasts, streamers, and communities.
@@ -336,7 +408,9 @@ export default function DocumentationSite() {
             {/* Get Verified Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="legal-tips" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Get Verified</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                Get Verified
+              </SectionHeading>
               <div className="space-y-6">
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">Verification on Reach.social provides creators with priority access and exclusive opportunities. To get verified, you must:</p>
                 <ol className="list-decimal pl-5 space-y-2 text-base lg:text-lg text-gray-600">
@@ -358,7 +432,9 @@ export default function DocumentationSite() {
             {/* Managing Community Section - REPLICATED FROM WORKING PATTERN */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="managing-community" className="scroll-mt-24">
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Referral Program</h2>
+              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+                Referral Program
+              </SectionHeading>
               <div className="space-y-6">
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
                   Invite your friends to reach.social and get paid! To start earning:
