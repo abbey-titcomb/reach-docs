@@ -26,13 +26,26 @@ export default function DocumentationSite() {
   };
 
   const copySectionLink = async (sectionId) => {
-    const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
     try {
+      // Simple approach: just use the current URL and add the hash
+      const baseUrl = window.location.href.split('#')[0];
+      const url = `${baseUrl}#${sectionId}`;
+      
+      console.log('Copying URL:', url);
+      
       await navigator.clipboard.writeText(url);
       setCopiedSection(sectionId);
       setTimeout(() => setCopiedSection(null), 2000);
     } catch (err) {
       console.error('Failed to copy link:', err);
+      // Fallback: try to copy just the hash
+      try {
+        await navigator.clipboard.writeText(`#${sectionId}`);
+        setCopiedSection(sectionId);
+        setTimeout(() => setCopiedSection(null), 2000);
+      } catch (fallbackErr) {
+        console.error('Fallback also failed:', fallbackErr);
+      }
     }
   };
 
@@ -160,7 +173,7 @@ export default function DocumentationSite() {
           <div className="flex-1 max-w-4xl space-y-12 lg:space-y-16 pb-96">
             {/* Introduction Section */}
             <section id="introduction" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="introduction" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Introduction
               </SectionHeading>
               <div className="space-y-6 lg:space-y-8">
@@ -192,7 +205,7 @@ export default function DocumentationSite() {
             {/* Basics Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="basics" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="basics" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Getting Started
               </SectionHeading>
               <div className="space-y-6">
@@ -231,7 +244,7 @@ export default function DocumentationSite() {
             {/* Before Launch Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="before-launch" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="before-launch" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 For Brands
               </SectionHeading>
               <div className="space-y-6">
@@ -339,7 +352,7 @@ export default function DocumentationSite() {
             {/* First 24 Hours Section - REPLICATED FROM WORKING PATTERN */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="first-24-hours" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="first-24-hours" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 For Creators
               </SectionHeading>
               <div className="space-y-6">
@@ -408,7 +421,7 @@ export default function DocumentationSite() {
             {/* Get Verified Section */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="legal-tips" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="legal-tips" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Get Verified
               </SectionHeading>
               <div className="space-y-6">
@@ -432,7 +445,7 @@ export default function DocumentationSite() {
             {/* Managing Community Section - REPLICATED FROM WORKING PATTERN */}
             <div className="border-t border-gray-100 my-16"></div>
             <section id="managing-community" className="scroll-mt-24">
-              <SectionHeading className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading id="managing-community" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Referral Program
               </SectionHeading>
               <div className="space-y-6">
