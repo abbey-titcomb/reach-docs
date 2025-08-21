@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Book, Settings, Clock, Users, Scale, HeartHandshake, User, Wallet, BadgeCheck, Pin, Shield, DollarSign, Copy, Check } from 'lucide-react';
+import { Book, Settings, Clock, Users, Scale, HeartHandshake, User, Wallet, BadgeCheck, Pin, Shield, DollarSign, Copy, Check, AlertCircle } from 'lucide-react';
 
 export default function DocumentationSite() {
   const [activeSection, setActiveSection] = useState('introduction');
@@ -9,17 +9,20 @@ export default function DocumentationSite() {
 
   const tableOfContents = [
     { id: 'introduction', title: 'Introduction', icon: Book },
-    { id: 'basics', title: 'Getting Started', icon: Settings },
-    { id: 'before-launch', title: 'For Brands', icon: HeartHandshake },
-    { id: 'first-24-hours', title: 'For Creators', icon: Users },
-    { id: 'legal-tips', title: 'Get Verified', icon: BadgeCheck },
-    { id: 'managing-community', title: 'Referral Program', icon: DollarSign },
+    { id: 'getting-started', title: 'Getting Started', icon: Settings },
+    { id: 'for-brands', title: 'For Brands', icon: HeartHandshake },
+    { id: 'for-creators', title: 'For Creators', icon: Users },
+    { id: 'get-verified', title: 'Get Verified', icon: BadgeCheck },
+    { id: 'referral-program', title: 'Referral Program', icon: DollarSign },
   ];
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerOffset = 96; // approximate fixed nav height (px)
+      const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+      const targetScrollTop = Math.max(elementTop - headerOffset, 0);
+      window.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
       // Update URL hash without triggering scroll
       window.history.replaceState(null, null, `#${sectionId}`);
     }
@@ -76,7 +79,7 @@ export default function DocumentationSite() {
   // Update active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['introduction', 'basics', 'before-launch', 'first-24-hours', 'managing-community', 'legal-tips'];
+      const sections = ['introduction', 'getting-started', 'for-brands', 'for-creators', 'get-verified', 'referral-program'];
       let currentSection = sections[0];
 
       for (const sectionId of sections) {
@@ -97,23 +100,23 @@ export default function DocumentationSite() {
   }, []);
 
   // Section heading component with copy link functionality
-  const SectionHeading = ({ id, children, className = "" }) => (
+  const SectionHeading = ({ anchorId, children, className = "" }) => (
     <h2 
-      id={id} 
+      data-anchor={anchorId}
       className={`${className} group cursor-pointer hover:text-blue-600 transition-colors duration-200 flex items-center gap-3`}
-      onClick={() => copySectionLink(id)}
+      onClick={() => copySectionLink(anchorId)}
       title="Click to copy link to this section"
     >
       {children}
       <button
         onClick={(e) => {
           e.stopPropagation();
-          copySectionLink(id);
+          copySectionLink(anchorId);
         }}
         className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 rounded"
         title="Copy link to section"
       >
-        {copiedSection === id ? (
+        {copiedSection === anchorId ? (
           <Check className="w-5 h-5 text-green-600" />
         ) : (
           <Copy className="w-5 h-5 text-gray-400 hover:text-gray-600" />
@@ -130,7 +133,9 @@ export default function DocumentationSite() {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-2">
+            <a href="https://reach.social" target="_blank" rel="noopener noreferrer">
             <img src="/reach-social-logo.png" alt="Reach Social" className="h-8 w-auto"/>
+            </a>
             </div>
           </div>
         </div>
@@ -173,13 +178,13 @@ export default function DocumentationSite() {
           <div className="flex-1 max-w-4xl space-y-12 lg:space-y-16 pb-96">
             {/* Introduction Section */}
             <section id="introduction" className="scroll-mt-24">
-              <SectionHeading id="introduction" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+              <SectionHeading anchorId="introduction" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Introduction
               </SectionHeading>
               <div className="space-y-6 lg:space-y-8">
                 <div className="prose max-w-none">
                   <p className="text-base lg:text-lg text-gray-600 leading-relaxed mt-6">
-                  Welcome to Reach.Social - a platform that helps creators get paid and brands go viral. Whether you’re a brand or creator, this guide will walk you through everything you need to know to get started.
+                  Welcome to Reach.Social - a platform where creators get paid and brands go viral. Whether you’re a brand or creator, this guide will walk you through everything you need to know to get started.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
@@ -202,10 +207,10 @@ export default function DocumentationSite() {
               </div>
             </section>
 
-            {/* Basics Section */}
+            {/* Getting Started Section */}
             <div className="border-t border-gray-100 my-16"></div>
-            <section id="basics" className="scroll-mt-24">
-              <SectionHeading id="basics" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+            <section id="getting-started" className="scroll-mt-24">
+              <SectionHeading anchorId="getting-started" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Getting Started
               </SectionHeading>
               <div className="space-y-6">
@@ -227,12 +232,11 @@ export default function DocumentationSite() {
                         <em>Perfect for product launches, releases, meme contests, or anytime you need a little community boost.</em>
                     </p>
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mt-8">
-                    <div className="flex">
-                      <div className="ml-3">
-                        <p className="text-m text-blue-700">
-                          <strong>Tip:</strong> Publish a contest on X and receive submissions directly in your replies with our custom bot! [LINK]
-                        </p>
-                      </div>
+                    <div className="flex items-center space-x-3">
+                      <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                      <p className="text-base lg:text-lg text-blue-700">
+                        Publish a contest on X and receive submissions directly in your replies with <a href="https://x.com/ShillForceCEO" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">our custom bot</a>!
+                      </p>
                     </div>
                 </div>
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
@@ -241,10 +245,10 @@ export default function DocumentationSite() {
               </div>
             </section>
 
-            {/* Before Launch Section */}
+            {/* For Brands Section */}
             <div className="border-t border-gray-100 my-16"></div>
-            <section id="before-launch" className="scroll-mt-24">
-              <SectionHeading id="before-launch" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+            <section id="for-brands" className="scroll-mt-24">
+              <SectionHeading anchorId="for-brands" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 For Brands
               </SectionHeading>
               <div className="space-y-6">
@@ -309,27 +313,18 @@ export default function DocumentationSite() {
                   <li>Upload your assets. Add logos, videos, audio that you want creators to use in their content.</li>
                 </ol>
 
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mt-8">
-                    <div className="flex">
-                      <div className="ml-3">
-                        <p className="text-m text-blue-700">
-                          <strong>Pro Tip:</strong> Take your time going through each section. The strategies outlined here have been tested and refined by successful creators.
-                        </p>
-                      </div>
-                    </div>
-                </div>
+
 
                 <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mt-10 mb-4 lg:mb-6">Reviewing Submissions</h3>
                 <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
                   All submissions can be reviewed directly on your campaign page. You control each dollar paid out — creators only get paid when you approve their content. Payouts are calculated based on the number of views that content has at the time of approval.
                 </p>
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mt-4">
-                  <div className="flex">
-                    <div className="ml-3">
-                      <p className="text-m text-blue-700">
-                        <strong>Tip:</strong> Watch out for fake engagement! We’ll help flag suspicious submissions, but if the view count doesn’t match up to the likes, comments, or shares, make sure to deny the submission and flag it for botting.
+                  <div className="flex items-center space-x-3">
+                    <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                      <p className="text-base lg:text-lg text-blue-700">
+                        Watch out for fake engagement! We’ll help flag suspicious submissions, but if the view count doesn’t match up to the likes, comments, or shares, make sure to deny the submission and flag it for botting.
                       </p>
-                    </div>
                   </div>
                 </div>
 
@@ -349,10 +344,10 @@ export default function DocumentationSite() {
               </div>
             </section>
 
-            {/* First 24 Hours Section - REPLICATED FROM WORKING PATTERN */}
+            {/* For Creators Section */}
             <div className="border-t border-gray-100 my-16"></div>
-            <section id="first-24-hours" className="scroll-mt-24">
-              <SectionHeading id="first-24-hours" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+            <section id="for-creators" className="scroll-mt-24">
+              <SectionHeading anchorId="for-creators" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 For Creators
               </SectionHeading>
               <div className="space-y-6">
@@ -420,8 +415,8 @@ export default function DocumentationSite() {
 
             {/* Get Verified Section */}
             <div className="border-t border-gray-100 my-16"></div>
-            <section id="legal-tips" className="scroll-mt-24">
-              <SectionHeading id="legal-tips" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+            <section id="get-verified" className="scroll-mt-24">
+              <SectionHeading anchorId="get-verified" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Get Verified
               </SectionHeading>
               <div className="space-y-6">
@@ -442,10 +437,10 @@ export default function DocumentationSite() {
               </div>
             </section>
 
-            {/* Managing Community Section - REPLICATED FROM WORKING PATTERN */}
+            {/* Referral Program Section */}
             <div className="border-t border-gray-100 my-16"></div>
-            <section id="managing-community" className="scroll-mt-24">
-              <SectionHeading id="managing-community" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
+            <section id="referral-program" className="scroll-mt-24">
+              <SectionHeading anchorId="referral-program" className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">
                 Referral Program
               </SectionHeading>
               <div className="space-y-6">
